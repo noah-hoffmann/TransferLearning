@@ -16,9 +16,12 @@ def main():
 
     relation = "energy_runs_pbe"
 
+    cursor.execute(f"SELECT COUNT(*) FROM {relation}")
+    total, = cursor.fetchone()
+
     cursor.execute(f"SELECT structure, mat_id, formula, energy_corrected, e_form, e_above_hull, spg FROM {relation};")
     entries = []
-    for structure, mat_id, formula, energy_corrected, e_form, e_above_hull, spg in tqdm(cursor):
+    for structure, mat_id, formula, energy_corrected, e_form, e_above_hull, spg in tqdm(cursor, total=total):
         entry = Structure.from_dict(structure)
         data = {
             'id': mat_id,
