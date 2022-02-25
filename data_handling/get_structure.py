@@ -1,5 +1,6 @@
 import psycopg2
 from getpass import getpass
+from pymatgen.entries.computed_entries import ComputedStructureEntry
 
 
 def main():
@@ -12,7 +13,8 @@ def main():
 
     cursor.execute(f"SELECT structure FROM {relation};")
     for structure, in cursor:
-        print(structure)
+        entry = ComputedStructureEntry.from_dict(structure)
+        print(entry)
         break
 
 
