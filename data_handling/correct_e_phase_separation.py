@@ -25,7 +25,9 @@ def find_all_affected_compositions(cursor):
 
 
 def get_compositions(formula, cursor):
-    query = f"SELECT mat_id, energy_corrected, e_phase_separation, nsites FROM energy_runs_pbe WHERE formula={formula};"
+    query = f"SELECT mat_id, energy_corrected, e_phase_separation, nsites FROM " \
+            f"energy_runs_pbe " \
+            f"WHERE formula='{formula}';"
     cursor.execute(query)
     results = pd.DataFrame(cursor.fetchall(), columns=['mat_id', 'energy_corrected', 'e_phase_separation', 'nsites'])
     return results
