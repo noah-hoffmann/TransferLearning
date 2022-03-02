@@ -28,13 +28,15 @@ def main():
     main_cursor.execute(f"SELECT COUNT(*) FROM {relation} WHERE {condition};")
     total, = main_cursor.fetchone()
 
-    main_cursor.execute(f"SELECT structure, mat_id, formula, energy_corrected, e_form, e_above_hull, spg, e_phase_separation "
-                   f"FROM {relation} "
-                   f"WHERE {condition} "
-                   f"ORDER BY mat_id;")
+    main_cursor.execute(
+        f"SELECT structure, mat_id, formula, energy_corrected, e_form, e_above_hull, spg, e_phase_separation "
+        f"FROM {relation} "
+        f"WHERE {condition} "
+        f"ORDER BY mat_id;")
     entries = []
     i = 0
-    for structure, mat_id, formula, energy_corrected, e_form, e_above_hull, spg, e_phase in tqdm(main_cursor, total=total):
+    for structure, mat_id, formula, energy_corrected, e_form, e_above_hull, spg, e_phase in tqdm(main_cursor,
+                                                                                                 total=total):
         if formula in affected_formulas:
             print(f'\n{formula}')
             e_phase = get_compositions(formula, side_cursor).at[mat_id, 'e_phase_separation']
@@ -56,7 +58,11 @@ def main():
                 pickle.dump(entries, file)
                 i += entries_per_file
             entries.clear()
-            exit()
+    if len(entries) > 0:
+        with gz.open(os.path.join(data_dir, f'data_{i}_{i + entries_per_file}.pickle.gz'), 'wb') as file:
+            pickle.dump(entries, file)
+            i += entries_per_file
+        entries.clear()
 
 
 if __name__ == '__main__':

@@ -25,13 +25,16 @@ def find_all_affected_compositions(cursor) -> set:
     return {f[0] for f in formulas}
 
 
-def get_compositions(formula, cursor):
+def get_compositions(formula, cursor, correct=True):
     query = f"SELECT mat_id, energy_corrected, e_phase_separation, nsites FROM " \
             f"energy_runs_pbe " \
             f"WHERE formula = '{formula}';"
     cursor.execute(query)
     results = pd.DataFrame(cursor.fetchall(), columns=['mat_id', 'energy_corrected', 'e_phase_separation', 'nsites'])
-    return correct_composition(results)
+    if correct:
+        return correct_composition(results)
+    else:
+        return results
 
 
 def correct_composition(compositions: pd.DataFrame):
@@ -62,6 +65,13 @@ def update_table(corrected_compostion: pd.DataFrame, cursor):
         print(query)
         # First check if everything is correct
         # cursor.execute(query)
+
+
+def compare(formula, cursor):
+    old = get_compositions(formula, cursor, correct=False)
+    new = correct_composition(old)
+    print(old, new, sep='\n')
+
 
 
 def test_correcting():
