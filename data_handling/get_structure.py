@@ -7,6 +7,7 @@ import os
 from tqdm import tqdm
 from correct_e_phase_separation import find_all_affected_compositions, get_compositions
 from getpass import getpass
+import warnings
 
 
 def main():
@@ -39,7 +40,10 @@ def main():
                                                                                                  total=total):
         if formula in affected_formulas:
             print(f'\n{formula}')
-            e_phase = get_compositions(formula, side_cursor).at[mat_id, 'e_phase_separation']
+            try:
+                e_phase = get_compositions(formula, side_cursor).at[mat_id, 'e_phase_separation']
+            except KeyError as e:
+                warnings.warn(f"Caught KeyError for {mat_id=} and {formula=}!")
         entry = Structure.from_dict(structure)
         data = {
             'id': mat_id,
