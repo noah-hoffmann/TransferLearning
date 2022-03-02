@@ -52,7 +52,7 @@ def main():
                                        entry_id=mat_id)
         entries.append(entry)
         if len(entries) >= entries_per_file:
-            with gz.open(os.path.join(data_dir, f'data_{i}_{i + entries_per_file}.pickle.gz', 'wb')) as file:
+            with gz.open(os.path.join(data_dir, f'data_{i}_{i + entries_per_file}.pickle.gz'), 'wb') as file:
                 pickle.dump(entries, file)
                 i += entries_per_file
             entries.clear()
