@@ -10,7 +10,7 @@ from util import connect
 def is_fixable(mat_id, cursor):
     query = 'SELECT e_above_hull ' \
             'FROM energy_runs_pbe ' \
-            'WHERE mat_id = {mat_id};'
+            "WHERE mat_id = '{mat_id}';"
     cursor.execute(query.format(mat_id=mat_id))
     result, = cursor.fetchone()
     return False if result is None else True
