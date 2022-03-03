@@ -62,7 +62,7 @@ def main():
     for file in tqdm(files):
         low, high = get_bounds(file)
         data: list = load(file)
-        already_done = low * entries_per_file
+        already_done = low
         if len(val_indices) > 0:
             val, val_indices = split_indices(val_indices, high)
         else:
