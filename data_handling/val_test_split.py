@@ -4,7 +4,7 @@ import pickle
 import gzip as gz
 import os
 import re
-from tqdm import tqdm
+from tqdm import tqdm, trange
 import bisect
 
 entries_per_file = 10_000
@@ -77,6 +77,17 @@ def main():
         for i, set in indices:
             set.append(data.pop(i))
         save(data, os.path.join(target_dir, os.path.basename(file)))
+
+    val_dir = os.path.join(target_dir, 'val')
+    if not os.path.exists(val_dir):
+        os.mkdir(val_dir)
+    for i in trange(0, len(validation_set), 10_000):
+        save(validation_set[i:i + 10000], os.path.join(val_dir, f'val_data_{i}_{i + 10000}.pickle.gz'))
+    test_dir = os.path.join(target_dir, 'test')
+    if not os.path.exists(test_dir):
+        os.mkdir(test_dir)
+    for i in trange(0, len(test_set), 10_000):
+        save(test_set[i:i + 10000], os.path.join(test_dir, f'test_data_{i}_{i + 10000}.pickle.gz'))
 
 
 if __name__ == '__main__':
