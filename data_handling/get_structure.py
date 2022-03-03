@@ -39,11 +39,11 @@ def main():
     for structure, mat_id, formula, energy_corrected, e_form, e_above_hull, spg, e_phase in tqdm(main_cursor,
                                                                                                  total=total):
         if formula in affected_formulas:
-            print(f'\n{formula}')
             try:
                 e_phase = get_compositions(formula, side_cursor).at[mat_id, 'e_phase_separation']
-            except KeyError as e:
-                warnings.warn(f"Caught KeyError for {mat_id=} and {formula=}!")
+            except KeyError:
+                warnings.warn(
+                    f"Caught KeyError for {mat_id=} and {formula=} in file data_{i}_{i + entries_per_file}.pickle.gz!")
         entry = Structure.from_dict(structure)
         data = {
             'id': mat_id,
