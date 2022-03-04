@@ -1,4 +1,4 @@
-path="ps";
+path=$1;
 for file in "$path"/split/*.pickle.gz
 do
   prepare --source-dir . --target-dir "$path"/prepared --file "$file" &
