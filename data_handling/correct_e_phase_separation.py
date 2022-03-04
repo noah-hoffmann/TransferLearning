@@ -10,12 +10,11 @@ def main():
     print(comp)
     correct_composition(comp)
     print(comp)
-    update_table(comp, cursor)
 
 
-def find_all_affected_compositions(cursor) -> set:
+def find_all_affected_compositions(cursor, relation) -> set:
     query = "SELECT formula " \
-            "FROM energy_runs_pbe " \
+            f"FROM {relation} " \
             "GROUP BY formula " \
             "HAVING COUNT(*) > 1 AND MIN(e_phase_separation) < 0 " \
             "ORDER BY formula;"
@@ -25,9 +24,9 @@ def find_all_affected_compositions(cursor) -> set:
     return {f[0] for f in formulas}
 
 
-def get_compositions(formula, cursor, correct=True):
+def get_compositions(formula, cursor, relation, correct=True):
     query = f"SELECT mat_id, energy_corrected, e_phase_separation, nsites FROM " \
-            f"energy_runs_pbe " \
+            f"{relation} " \
             f"WHERE formula = '{formula}';"
     cursor.execute(query)
     results = pd.DataFrame(cursor.fetchall(), columns=['mat_id', 'energy_corrected', 'e_phase_separation', 'nsites'])
@@ -55,29 +54,17 @@ def correct_composition(compositions: pd.DataFrame):
     return compositions.set_index('mat_id')
 
 
-def update_table(corrected_compostion: pd.DataFrame, cursor):
-    query_format = "UPDATE energy_runs_pbe " \
-                   "SET e_phase_separation = {e_phase_separation} " \
-                   "WHERE mat_id = {mat_id}"
-    for _, row in corrected_compostion.iterrows():
-        query = query_format.format(e_phase_separation=row['e_phase_separation'],
-                                    mat_id=row['mat_id'])
-        print(query)
-        # First check if everything is correct
-        # cursor.execute(query)
-
-
 def compare(formula, cursor):
     old = get_compositions(formula, cursor, correct=False)
     new = correct_composition(old)
     print(old, new, sep='\n')
 
 
-
 def test_correcting():
     Ac2AgHg = pd.DataFrame([(-0.000970758, -12.8615, 4, 'A'),
                             (-0.00046, -12.8595, 4, 'B'),
-                            (0.00040276, -12.856, 4, 'C')], columns=['e_phase_separation', 'energy_corrected', 'nsites', 'mat_id'])
+                            (0.00040276, -12.856, 4, 'C')],
+                           columns=['e_phase_separation', 'energy_corrected', 'nsites', 'mat_id'])
     corrected = correct_composition(Ac2AgHg)
     print(corrected)
     print(corrected.loc['A'])
