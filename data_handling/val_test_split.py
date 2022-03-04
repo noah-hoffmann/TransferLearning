@@ -74,7 +74,7 @@ def main():
     args = parser.parse_args()
 
     data_dir = args.data_dir
-    target_dir = args.tagret_dir
+    target_dir = args.target_dir
     entries_per_file = args.entries_per_file
 
     if not os.path.isdir(target_dir):
