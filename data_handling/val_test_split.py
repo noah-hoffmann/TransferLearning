@@ -8,6 +8,7 @@ from tqdm import tqdm, trange
 import bisect
 import argparse
 
+
 # entries_per_file = 10_000
 
 
@@ -28,6 +29,10 @@ def get_val_test_indices(indices, val_size=.1, test_size=.1, random_state=0):
 
 def load(file):
     return pickle.load(gz.open(file))
+
+
+def get_files(path):
+    return sorted(glob(path), key=get_num)
 
 
 def save(data, file):
@@ -79,7 +84,7 @@ def main():
 
     if not os.path.isdir(target_dir):
         os.makedirs(target_dir)
-    files = sorted(glob(os.path.join(data_dir, '*.pickle.gz')), key=get_num)
+    files = get_files(os.path.join(data_dir, '*.pickle.gz'))
     indices = list(range(get_num_of_entries(files, entries_per_file)))
     val_indices, test_indices = get_val_test_indices(indices, args.val_size, args.test_size, args.random_state)
     validation_set = []
@@ -107,12 +112,14 @@ def main():
     if not os.path.isdir(val_dir):
         os.makedirs(val_dir)
     for i in trange(0, len(validation_set), entries_per_file):
-        save(validation_set[i:i + entries_per_file], os.path.join(val_dir, f'val_data_{i}_{i + entries_per_file}.pickle.gz'))
+        save(validation_set[i:i + entries_per_file],
+             os.path.join(val_dir, f'val_data_{i}_{i + entries_per_file}.pickle.gz'))
     test_dir = os.path.join(target_dir, 'test')
     if not os.path.isdir(test_dir):
         os.makedirs(test_dir)
     for i in trange(0, len(test_set), entries_per_file):
-        save(test_set[i:i + entries_per_file], os.path.join(test_dir, f'test_data_{i}_{i + entries_per_file}.pickle.gz'))
+        save(test_set[i:i + entries_per_file],
+             os.path.join(test_dir, f'test_data_{i}_{i + entries_per_file}.pickle.gz'))
 
 
 if __name__ == '__main__':
