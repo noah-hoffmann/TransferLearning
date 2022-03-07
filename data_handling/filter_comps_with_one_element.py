@@ -4,10 +4,17 @@ from tqdm import tqdm
 from util import remove_batch_ids, load, save
 import re
 from itertools import chain
+import argparse
 
 
 def main():
-    paths = [os.path.join('pbe', 'prepared', '*.pickle.gz'), os.path.join('pbe', 'prepared', '*', '*.pickle.gz')]
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--path', '-p',
+                        type=str,
+                        default=os.path.join("pbe", "prepared"))
+
+    args = parser.parse_args()
+    paths = [os.path.join(args.path, '*.pickle.gz'), os.path.join(args.path, '*', '*.pickle.gz')]
     files = list(chain(*[get_files(path) for path in paths]))
     single_atom_comp = re.compile(r'^[A-Z][a-z]*\d+$')
     for file in tqdm(files):
