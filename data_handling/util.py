@@ -17,6 +17,8 @@ def connect(*, dbname="agm_ht", user="noah", password=None):
 
 
 def remove_batch_ids(data: dict, batch_ids: set, inplace: bool = True, modify_batch_ids: bool = True) -> dict:
+    if len(batch_ids) == 0:
+        return data
     if not modify_batch_ids:
         batch_ids = batch_ids.copy()
     # create list of indices which have to be removed
@@ -36,7 +38,7 @@ def remove_batch_ids(data: dict, batch_ids: set, inplace: bool = True, modify_ba
     for i in indices_to_remove:
         ids.pop(i)
     new_data['batch_ids'] = ids
-    new_data['batch_comp'] = np.delete(data['batch_comp'], indices_to_remove)
+    new_data['batch_comp'] = np.delete(data['batch_comp'], indices_to_remove).reshape((-1, 1))
     if not inplace:
         new_data['target'] = {}
     for target in data['target']:
