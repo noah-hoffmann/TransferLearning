@@ -21,10 +21,10 @@ def remove_batch_ids(data: dict, batch_ids: set, inplace: bool = True, modify_ba
         batch_ids = batch_ids.copy()
     # create list of indices which have to be removed
     indices_to_remove = []
-    for i, batch_id in enumerate(data['batch_ids']):
-        if batch_id[0] in batch_ids:
+    for i, (batch_id,) in enumerate(data['batch_ids']):
+        if batch_id in batch_ids:
             indices_to_remove.append(i)
-            batch_ids.remove(batch_id[0])
+            batch_ids.remove(batch_id)
     # reverse list of indices to enable easy removing of items of a list by consecutive pops
     indices_to_remove.reverse()
     if inplace:

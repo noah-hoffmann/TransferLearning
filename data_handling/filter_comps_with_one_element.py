@@ -1,21 +1,23 @@
-
 from val_test_split import get_files
 import os
 from tqdm import tqdm
 from util import remove_batch_ids, load, save
 import re
+from itertools import chain
 
 
 def main():
-    paths = os.path.join('pbe', 'prepared', '*.pickle.gz')
-    files = get_files(paths)
+    paths = [os.path.join('pbe', 'prepared', '*.pickle.gz'), os.path.join('pbe', 'prepared', '*', '*.pickle.gz')]
+    files = list(chain(*[get_files(path) for path in paths]))
     single_atom_comp = re.compile(r'^[A-Z][a-z]*\d+$')
     for file in tqdm(files):
         data = load(file)
-        ids_to_remove = []
+        ids_to_remove = set()
         for (batch_id,), (batch_comp,) in zip(data['batch_ids'], data['batch_comp']):
             if single_atom_comp.match(batch_comp):
-                print(batch_id, batch_comp)
+                ids_to_remove.add(batch_id)
+        remove_batch_ids(data, ids_to_remove)
+        save(data, file)
 
 
 if __name__ == '__main__':
