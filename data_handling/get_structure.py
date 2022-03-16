@@ -9,6 +9,7 @@ from correct_e_phase_separation import find_all_affected_compositions, get_compo
 from getpass import getpass
 import warnings
 import argparse
+import re
 
 
 def main():
@@ -46,6 +47,8 @@ def main():
     main_cursor.execute(f"SELECT COUNT(*) FROM {relation} WHERE {condition};")
     total, = main_cursor.fetchone()
 
+    one_element_comp = re.compile(r"^[A-Z][a-z]*\d*$")
+
     main_cursor.execute(
         f"SELECT structure, mat_id, formula, energy_corrected, e_form, e_above_hull, spg, e_phase_separation "
         f"FROM {relation} "
@@ -73,6 +76,9 @@ def main():
         }
         entry = ComputedStructureEntry(entry, energy_corrected, composition=Composition(formula), data=data,
                                        entry_id=mat_id)
+        # don't add entry if the composition only consists of a single element
+        if one_element_comp.match(entry.data['decomposition']):
+            continue
         entries.append(entry)
         if len(entries) >= entries_per_file:
             with gz.open(os.path.join(data_dir, f'data_{i}_{i + entries_per_file}.pickle.gz'), 'wb') as file:

@@ -1,4 +1,4 @@
-from util import load, get_files
+from util import load, get_files, remove_batch_ids, save
 import os
 from tqdm import tqdm
 
@@ -13,15 +13,14 @@ def main():
             val_test_ids.add(batch_id)
 
     to_check = get_files(os.path.join('pbe', 'prepared', '*.pickle.gz'))
-    total = 0
-    to_delete = 0
     for file in tqdm(to_check):
         data = load(file)
-        total += len(data['batch_ids'])
+        to_remove = set()
         for batch_id, in data['batch_ids']:
             if batch_id in val_test_ids:
-                to_delete += 1
-    print(f"{to_delete / total:.2%} needs to be removed.")
+                to_remove.add(batch_id)
+        remove_batch_ids(data, to_remove)
+        save(data, file)
 
 
 if __name__ == '__main__':

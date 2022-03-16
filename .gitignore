@@ -133,3 +133,9 @@ dmypy.json
 
 # Data files
 *.pickle.gz
+*.ckpt
+tb_logs/
+embeddings/
+*.pdf
+*.png
+*.jpg
