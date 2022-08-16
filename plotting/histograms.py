@@ -49,6 +49,8 @@ def main():
         os.makedirs(save_path, exist_ok=True)
 
         plt.figure()
+        # remove outlier
+        properties['e_above_hull_new'] = sorted(properties['e_above_hull_new'])[1:]
         plt.hist(properties['e_above_hull_new'], bins=15)
         plt.xlabel('distance to the convex hull [eV atom$^{-1}$]', fontsize=17)
         plt.ylabel('count', fontsize=17)
@@ -58,6 +60,8 @@ def main():
         plt.savefig(os.path.join(save_path, 'hull_histogram.pdf'))
 
         plt.figure()
+        # remove outlier
+        properties['e-form'] = sorted(properties['e-form'])[1:]
         plt.hist(properties['e-form'], bins=15)
         plt.xlabel('formation energy [eV atom$^{-1}$]', fontsize=17)
         plt.ylabel('count', fontsize=17)
