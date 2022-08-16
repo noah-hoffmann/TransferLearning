@@ -6,6 +6,7 @@ import os
 from glob import glob
 import matplotlib.pyplot as plt
 from multiprocessing import Pool
+import sys
 
 
 def load(file):
@@ -27,7 +28,7 @@ def load_properties(file, property_keys=('e_above_hull_new', 'e-form', 'volume')
 
 
 def main():
-    paths = [os.path.join(data_set, 'data') for data_set in ['scan', 'pbesol', 'pbe']]
+    paths = [os.path.join(data_set, 'data') for data_set in [sys.argv[1]]]
 
     for path in paths:
         files = sorted(glob(os.path.join(path, '*.pickle.gz')))
