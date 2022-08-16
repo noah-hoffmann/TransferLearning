@@ -45,7 +45,7 @@ def main():
         #     for key, item in data.items():
         #         properties[key].extend(item)
 
-        save_path = os.path.join('histograms', os.path.basename(path))
+        save_path = os.path.join('histograms', os.path.basename(os.path.split(path)[0]))
         os.makedirs(save_path, exist_ok=True)
 
         plt.figure()
