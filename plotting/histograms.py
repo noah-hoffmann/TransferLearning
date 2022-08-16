@@ -50,7 +50,8 @@ def main():
 
         plt.figure()
         # remove outlier
-        properties['e_above_hull_new'] = sorted(properties['e_above_hull_new'])[1:]
+        if sys.argv[1] == 'pbe':
+            properties['e_above_hull_new'] = sorted(properties['e_above_hull_new'])[1:]
         plt.hist(properties['e_above_hull_new'], bins=15)
         plt.xlabel('distance to the convex hull [eV atom$^{-1}$]', fontsize=17)
         plt.ylabel('count', fontsize=17)
@@ -61,7 +62,8 @@ def main():
 
         plt.figure()
         # remove outlier
-        properties['e-form'] = sorted(properties['e-form'])[1:]
+        if sys.argv[1] == 'pbe':
+            properties['e-form'] = sorted(properties['e-form'])[1:]
         plt.hist(properties['e-form'], bins=15)
         plt.xlabel('formation energy [eV atom$^{-1}$]', fontsize=17)
         plt.ylabel('count', fontsize=17)
