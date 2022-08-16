@@ -71,7 +71,7 @@ def main():
                                        weights=np.full_like(properties[property], 1 / len(properties[property])))
             bins = np.cumsum(bins)
             ax.step(edges[:-1], bins, color='r')
-            ax.set_ylabel('relative cumulative count sum', fontsize=17)
+            ax.set_ylabel('relative cumulative count', fontsize=17)
 
             plt.tight_layout()
             plt.savefig(os.path.join(save_path, f'{short}_histogram.pdf'))
