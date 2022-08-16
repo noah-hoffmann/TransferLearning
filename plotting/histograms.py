@@ -9,7 +9,9 @@ from multiprocessing import Pool
 
 
 def load(file):
-    return pickle.load(gz.open(file))
+    with gz.open(file) as f:
+        data = pickle.load(f)
+    return data
 
 
 def get_properties(data: list[ComputedStructureEntry], property_keys):
