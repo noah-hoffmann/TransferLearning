@@ -74,7 +74,7 @@ def main():
 
             ax = plt.gca().twinx()
             bins, edges = np.histogram(clipped, bins=bins,
-                                       weights=np.full_like(properties[property], 1 / len(properties[property])))
+                                       weights=np.full_like(clipped, 1 / len(properties[property])))
             bins = np.cumsum(bins)
             ax.step(edges[:-1], bins, color='r')
             ax.set_ylabel('relative cumulative count', fontsize=17)
