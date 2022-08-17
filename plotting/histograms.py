@@ -55,11 +55,17 @@ def main():
                  ('volume', 'volume', r'$\AA^3$ atom$^{-1}$', 'volume'))
 
         for property, label, unit, short in items:
+            print(label)
             plt.figure()
             # remove outlier
             if sys.argv[1] == 'pbe' and property != 'volume':
+                print(f"entry with {min(properties[property])} is removed")
                 properties[property] = np.sort(properties[property])[1:]
-            n, _, _ = plt.hist(properties[property], bins=15)
+                clipped = properties[property][properties[property] < 5]
+                print(f"{clipped.size - properties[property].size} were clipped up to {max(properties[property])}")
+            else:
+                clipped = properties[property]
+            n, _, _ = plt.hist(clipped)
             bins = len(n)
             plt.xlabel(f'{label} [{unit}]', fontsize=17)
             plt.ylabel('count', fontsize=17)
@@ -67,7 +73,7 @@ def main():
             plt.gca().tick_params(axis='both', labelsize=15)
 
             ax = plt.gca().twinx()
-            bins, edges = np.histogram(properties[property], bins=bins,
+            bins, edges = np.histogram(clipped, bins=bins,
                                        weights=np.full_like(properties[property], 1 / len(properties[property])))
             bins = np.cumsum(bins)
             ax.step(edges[:-1], bins, color='r')
