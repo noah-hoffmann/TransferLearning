@@ -58,11 +58,14 @@ def main():
             print(label)
             plt.figure()
             # remove outlier
-            if sys.argv[1] == 'pbe' and property != 'volume':
-                print(f"entry with {min(properties[property])} is removed")
-                properties[property] = np.sort(properties[property])[1:]
-                clipped = properties[property][properties[property] < 5]
-                print(f"{clipped.size - properties[property].size} were clipped up to {max(properties[property])}")
+            if sys.argv[1] == 'pbe':
+                if property != 'volume':
+                    print(f"entry with {min(properties[property])} is removed")
+                    properties[property] = np.sort(properties[property])[1:]
+                    clipped = properties[property][properties[property] < 5]
+                else:
+                    clipped = properties[property][properties[property] <= 200]
+                print(f"{properties[property].size - clipped.size} were clipped up to {max(properties[property])}")
             else:
                 clipped = properties[property]
             n, _, _ = plt.hist(clipped)
@@ -76,7 +79,7 @@ def main():
             bins, edges = np.histogram(clipped, bins=bins,
                                        weights=np.full_like(clipped, 1 / len(properties[property])))
             bins = np.cumsum(bins)
-            ax.step(edges[:-1], bins, color='r')
+            ax.step(edges[:-1], bins, color='r', where='post')
             ax.set_ylabel('relative cumulative count', fontsize=17)
 
             plt.tight_layout()
