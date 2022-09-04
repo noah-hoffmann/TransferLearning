@@ -29,18 +29,24 @@ def load_properties(file, property_keys=('e_above_hull_new', 'e-form', 'volume')
     return get_properties(load(file), property_keys)
 
 
+def load_parallel(files):
+    properties = {'e_above_hull_new': [], 'e-form': [], 'volume': []}
+
+    # load files in parallel to speed up the loading
+    with Pool() as pool:
+        for data in tqdm(pool.imap_unordered(load_properties, files), total=len(files)):
+            for key, item in data.items():
+                properties[key] = np.concatenate((properties[key], item))
+
+    return properties
+
+
 def main():
     paths = [os.path.join(data_set, 'data') for data_set in [sys.argv[1]]]
 
     for path in paths:
         files = sorted(glob(os.path.join(path, '*.pickle.gz')))
-        properties = {'e_above_hull_new': [], 'e-form': [], 'volume': []}
-
-        # load files in parallel to speed up the loading
-        with Pool() as pool:
-            for data in tqdm(pool.imap_unordered(load_properties, files), total=len(files)):
-                for key, item in data.items():
-                    properties[key] = np.concatenate((properties[key], item))
+        properties = load_parallel(files)
 
         # for file in tqdm(files[:10]):
         #     data = get_properties(load(file), properties.keys())
@@ -68,7 +74,8 @@ def main():
                 print(f"{properties[property].size - clipped.size} were clipped up to {max(properties[property])}")
             else:
                 clipped = properties[property]
-            n, _, _ = plt.hist(clipped)
+            bins = 100
+            n, _, _ = plt.hist(clipped, bins=bins)
             bins = len(n)
             plt.xlabel(f'{label} [{unit}]', fontsize=17)
             plt.ylabel('count', fontsize=17)
