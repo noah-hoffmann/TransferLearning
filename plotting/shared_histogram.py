@@ -11,10 +11,10 @@ def main():
     property = 'e_above_hull_new'
 
     print("Loading SCAN data...", flush=True)
-    scan_data = load_parallel(load_parallel(glob(os.path.join(scan_path, '*.pickle.gz'))))
+    scan_data = load_parallel(glob(os.path.join(scan_path, '*.pickle.gz')))
 
     print("Loading PBEsol data...", flush=True)
-    pbesol_data = load_parallel(load_parallel(glob(os.path.join(pbesol_path, '*.pickle.gz'))))
+    pbesol_data = load_parallel(glob(os.path.join(pbesol_path, '*.pickle.gz')))
 
     bins = 100
     plt.hist([scan_data[property], pbesol_data[property]], bins=bins)
