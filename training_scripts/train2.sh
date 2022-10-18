@@ -14,8 +14,9 @@ then
 fi
 
 # Training loop
-for target in e-form volume
+target="e_above_hull_new"
+for set_size in 0.2 0.4 0.6 0.8
 do
-  echo Training target "$target"
-  train-CGAT --gpus 12 --target "$target" --fea-path "$embedding_path" --epchs 390 --clr-period 130 --data-path prepared --val-path prepared/val --test-path prepared/test --batch-size 512
+  echo "Training set size $set_size"
+  train-CGAT --gpus 12 --target "$target" --fea-path "$embedding_path" --epchs 400 --clr-period 70 --data-path prepared --val-path prepared/val --test-path prepared/test --train-percentage "$set_size" --pretrained-model ""
 done
