@@ -27,6 +27,7 @@ def main():
             data.pop(i)
         removed += len(to_remove)
         save(data, file)
+    print(f"{removed} entries were removed!")
 
 
 if __name__ == '__main__':
