@@ -27,7 +27,7 @@ def main():
         data: list[ComputedStructureEntry] = load(file)
         for entry in data:
             mat_id = entry.data['id']
-            cursor.execute(query.format(property=args.p, relation=args.r))
+            cursor.execute(query.format(property=args.p, relation=args.r, mat_id=mat_id))
             results = cursor.fetchall()
             if len(results) == 0:
                 warnings.warn(f"{mat_id = } does not exist in database, skipping this entry!")
