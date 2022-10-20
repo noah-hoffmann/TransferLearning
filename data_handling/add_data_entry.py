@@ -27,14 +27,14 @@ def main():
         data: list[ComputedStructureEntry] = load(file)
         for entry in data:
             mat_id = entry.data['id']
-            cursor.execute(query.format(property=args.p, relation=args.r, mat_id=mat_id))
+            cursor.execute(query.format(property=args.property, relation=args.relation, mat_id=mat_id))
             results = cursor.fetchall()
             if len(results) == 0:
                 warnings.warn(f"{mat_id = } does not exist in database, skipping this entry!")
                 continue
             elif len(results) > 1:
                 warnings.warn(f"{mat_id = } not unique, only using first result!")
-            entry.data[args.p] = results[0][0]
+            entry.data[args.property] = results[0][0]
         save(data, file)
 
 
