@@ -42,13 +42,16 @@ def main():
         os.makedirs(data_dir)
 
     # find all compositions, which have wrong e_phase_separation values
+    print("Finding compositions, which have wrong phase separation values...")
     affected_formulas = find_all_affected_compositions(main_cursor, relation)
 
+    print("Counting compositions...")
     main_cursor.execute(f"SELECT COUNT(*) FROM {relation} WHERE {condition};")
     total, = main_cursor.fetchone()
 
     one_element_comp = re.compile(r"^[A-Z][a-z]*\d*$")
 
+    print("Executing sql querry...")
     main_cursor.execute(
         f"SELECT structure, mat_id, formula, energy_corrected, e_form, e_above_hull, spg, e_phase_separation, band_gap_ind "
         f"FROM {relation} "
@@ -56,6 +59,7 @@ def main():
         f"ORDER BY mat_id;")
     entries = []
     i = 0
+    print("Getting data...", flush=True)
     for structure, mat_id, formula, energy_corrected, e_form, e_above_hull, spg, e_phase, band_gap_ind in tqdm(main_cursor,
                                                                                                  total=total):
         if formula in affected_formulas:
