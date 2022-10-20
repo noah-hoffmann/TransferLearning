@@ -29,7 +29,7 @@ def main():
 
     args = parser.parse_args()
 
-    password = getpass()
+    password = getpass("Enter password for database: ")
     main_cursor = connect(password=password)
     side_cursor = connect(password=password)
 
@@ -50,13 +50,13 @@ def main():
     one_element_comp = re.compile(r"^[A-Z][a-z]*\d*$")
 
     main_cursor.execute(
-        f"SELECT structure, mat_id, formula, energy_corrected, e_form, e_above_hull, spg, e_phase_separation "
+        f"SELECT structure, mat_id, formula, energy_corrected, e_form, e_above_hull, spg, e_phase_separation, band_gap_ind "
         f"FROM {relation} "
         f"WHERE {condition} "
         f"ORDER BY mat_id;")
     entries = []
     i = 0
-    for structure, mat_id, formula, energy_corrected, e_form, e_above_hull, spg, e_phase in tqdm(main_cursor,
+    for structure, mat_id, formula, energy_corrected, e_form, e_above_hull, spg, e_phase, band_gap_ind in tqdm(main_cursor,
                                                                                                  total=total):
         if formula in affected_formulas:
             try:
@@ -72,7 +72,8 @@ def main():
             'decomposition': formula,
             'spg': spg,
             'volume': entry.volume / entry.num_sites,
-            'e_above_hull_new': e_phase
+            'e_above_hull_new': e_phase,
+            'band_gap_ind': band_gap_ind,
         }
         entry = ComputedStructureEntry(entry, energy_corrected, composition=Composition(formula), data=data,
                                        entry_id=mat_id)
