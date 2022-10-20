@@ -33,4 +33,8 @@ def main():
             results = cursor.fetchall()
             if len(results) == 0:
                 missing += 1
-    print(f"{missing} / {total} are missing. ({missing/total:.2%})")
+    print(f"{missing} / {total} are missing. ({missing / total:.2%})")
+
+
+if __name__ == '__main__':
+    main()
