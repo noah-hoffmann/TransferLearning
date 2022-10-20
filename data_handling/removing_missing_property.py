@@ -15,6 +15,7 @@ def main():
 
     files = glob(os.path.join(args.data_dir, '*.pickle.gz')) + glob(os.path.join(args.data_dir, '*', '*.pickle.gz'))
 
+    removed = 0
     for file in tqdm(files):
         data: list[ComputedStructureEntry] = load(file)
         to_remove = []
@@ -24,7 +25,8 @@ def main():
 
         for i in reversed(to_remove):
             data.pop(i)
-        print(f"{len(to_remove)} entries are removed!")
+        removed += len(to_remove)
+        save(data, file)
 
 
 if __name__ == '__main__':
