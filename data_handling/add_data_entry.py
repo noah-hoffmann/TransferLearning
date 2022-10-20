@@ -22,7 +22,7 @@ def main():
     cursor = connect()
 
     # sql query
-    query = "SELECT {property} FROM {relation} WHERE mat_id = \"{mat_id}\";"
+    query = "SELECT {property} FROM {relation} WHERE mat_id = '{mat_id}';"
 
     for file in tqdm(files):
         data: list[ComputedStructureEntry] = load(file)
