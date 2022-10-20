@@ -3,6 +3,7 @@ from pymatgen.entries.computed_entries import ComputedStructureEntry
 import argparse
 from tqdm import tqdm
 import warnings
+import os.path
 
 
 def main():
@@ -15,7 +16,7 @@ def main():
     args = parser.parse_args()
 
     # find files
-    files = get_files(args.data_dir)
+    files = get_files(os.path.join(args.data_dir, '*.pickle.gz'))
 
     # connect to database
     cursor = connect()
