@@ -58,8 +58,8 @@ def main():
         with torch.no_grad():
             for batch in loader:
                 _, _, prediction, target, _ = model.evaluate(batch)
-                targets.append(target)
-                predictions.append(prediction)
+                targets.append(target.cpu().numpy())
+                predictions.append(prediction.cpu().numpy())
     print(
         f"Mean Absoulte Error = {np.abs(np.concatenate(targets, axis=None) - np.concatenate(predictions, axis=None)).mean()}")
 
