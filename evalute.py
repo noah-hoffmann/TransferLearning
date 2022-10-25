@@ -51,7 +51,7 @@ def main():
         dataset = CompositionData(
             data=file,
             fea_path=hparams.fea_path,
-            max_neighbor_number=model.hparams.max_neighbour_number,
+            max_neighbor_number=model.hparams.max_nbr,
             target=model.hparams.target
         )
         loader = DataLoader(dataset, batch_size=hparams.batch_size, shuffle=False, collate_fn=collate_fn)
