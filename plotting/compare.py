@@ -57,27 +57,47 @@ def find_transfer_runs(root_dir='tb_logs', tag='val_mae'):
     return transfer_runs
 
 
+def get_text(dataset, property):
+    if property == "volume":
+        return f"{dataset.upper()} volume"
+    else:
+        return rf"$\mathrm{{E}}_{{\mathrm{{{property.split('-')[1].capitalize()}}}}}^{{\mathrm{{{dataset.upper()}}}}}$"
+
+
+def get_title(run: str):
+    pattern = re.compile(r'^([a-z_]+)_([a-z-]+)_to_([a-z_]+)_([a-z-]+)$')
+    match = pattern.match(run)
+    dataset1, property1, dataset2, property2 = match.groups()
+    return get_text(dataset1, property1) + " to " + get_text(dataset2, property2)
+
+
 def main():
     runs = find_transfer_runs()
     save_path = os.path.join('plots', '{run}.{ext}')
     extensions = ['pdf']  # , 'png']
     units = {
-        'volume': r'$\AA^3$ atom$^{-1}$',
-        'e-form': r'eV atom$^{-1}$',
-        'e-hull': r'eV atom$^{-1}$'
+        'volume': r'$\mathrm{\AA}^3$ atom$^{-1}$',
+        'e-form': r'eV/atom',
+        'e-hull': r'eV/atom'
     }
+    plt.rcParams.update({
+        "text.usetex": True
+    })
     for run, df in runs:
+        # if run in ("pbe_volume_to_scan_e-form", "pbe_e-form_to_scan_volume"):
+        #     plt.yscale('log')
         target = run[run.rfind('_') + 1:]
         df.plot(x='epoch')
         plt.gca().tick_params(axis='both', labelsize=15)
         plt.xlabel('epoch', fontsize=17)
-        plt.ylabel(f'val mae [{units[target]}]', fontsize=17)
-        plt.title(run.replace('_', ' ').replace('pbe', 'PBE').replace('scan', 'SCAN').
-                  replace('e-form', r'$E_{\mathrm{form}}$').replace('e-hull', r'$E_{\mathrm{hull}}$'),
+        plt.ylabel(f'val MAE [{units[target]}]', fontsize=17)
+        plt.title(get_title(run),
                   fontsize=17)
-        if run in ("pbe_volume_to_scan_e-form", "pbe_e-form_to_scan_volume"):
-            plt.yscale('log')
         plt.legend(fontsize=17)
+        if run == "pbe_volume_to_scan_e-form":
+            plt.ylim((0.01, 0.25))
+        elif run == "pbe_e-form_to_scan_volume":
+            plt.ylim((0.15, 0.85))
         plt.tight_layout()
         for ext in extensions:
             plt.savefig(save_path.format(run=run, ext=ext))
