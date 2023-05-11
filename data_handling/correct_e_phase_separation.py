@@ -4,9 +4,10 @@ import pandas as pd
 
 def main():
     cursor = connect()
-    formulas = find_all_affected_compositions(cursor)
+    relation = 'energy_runs_pbe'
+    formulas = find_all_affected_compositions(cursor, relation)
     print(formulas[:10])
-    comp = get_compositions(formulas[0], cursor)
+    comp = get_compositions(list(formulas)[0], cursor, relation)
     print(comp)
     correct_composition(comp)
     print(comp)

@@ -9,7 +9,7 @@ import re
 
 def connect(*, dbname="agm_ht", user="noah", password=None):
     if password is None:
-        password = getpass()
+        password = getpass("Enter password for database: ")
     conn = psycopg2.connect(dbname=dbname,
                             user=user,
                             password=password)
