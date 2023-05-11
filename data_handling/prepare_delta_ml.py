@@ -57,10 +57,10 @@ def main():
     training_files = glob(os.path.join(args.data, "*.pickle.gz"))
 
     sub_dirs = ("val", "test")
-    target_val_dir = target_dir / "val"
-    target_test_dir = target_dir / "test"
-    target_val_dir.mkdir(parents=True, exist_ok=True)
-    target_test_dir.mkdir(parents=True, exist_ok=True)
+    target_val_dir = os.path.join(target_dir, "val")
+    target_test_dir = os.path.join(target_dir, "test")
+    os.makedirs(target_val_dir, exist_ok=True)
+    os.makedirs(target_test_dir, exist_ok=True)
 
     for file in tqdm(training_files):
         data = load(file)
