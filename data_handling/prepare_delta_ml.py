@@ -34,7 +34,7 @@ def add_deltas(data, cursor, affected_formulas, file, relation):
         # now calculate the actual delta
         data["target"]["delta_e_above_hull_new"][i, 0] = data["target"]["e_above_hull_new"][i, 0] - e_phase
         data["target"]["delta_e-form"][i, 0] = data["target"]["e-form"][i, 0] - e_form
-        data["target"]["delta_band_gap_ind"][i, 0] = data["target"]["banb_gap_ind"][i, 0] - band_gap_ind
+        data["target"]["delta_band_gap_ind"][i, 0] = data["target"]["band_gap_ind"][i, 0] - band_gap_ind
 
 
 def main():
