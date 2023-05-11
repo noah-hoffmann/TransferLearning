@@ -1,5 +1,5 @@
 from argparse import ArgumentParser
-from util import load, save, glob, connect
+from util import load, save, glob, connect, remove_batch_ids
 import os.path
 from tqdm import tqdm
 from correct_e_phase_separation import find_all_affected_compositions, get_compositions
@@ -14,12 +14,15 @@ def add_deltas(data, cursor, affected_formulas, file, relation):
     for p in targets:
         data["target"][f"delta_{p}"] = data["target"]["e-form"].copy()
 
-    for i, (batch_id,) in enumerate(data["batch_ids"]):
+    to_remove = set()
+
+    for i, (batch_id,) in enumerate(tqdm(data["batch_ids"])):
         # execute query and get reference values
         cursor.execute(query.format(batch_id=batch_id))
         results = cursor.fetchall()
         if len(results) == 0:
             warnings.warn(f"{batch_id = } does not exist in database, skipping this entry!")
+            to_remove.add(batch_id)
             continue
         elif len(results) > 1:
             warnings.warn(f"{batch_id = } not unique, only using first result!")
@@ -35,6 +38,9 @@ def add_deltas(data, cursor, affected_formulas, file, relation):
         data["target"]["delta_e_above_hull_new"][i, 0] = data["target"]["e_above_hull_new"][i, 0] - e_phase
         data["target"]["delta_e-form"][i, 0] = data["target"]["e-form"][i, 0] - e_form
         data["target"]["delta_band_gap_ind"][i, 0] = data["target"]["band_gap_ind"][i, 0] - band_gap_ind
+
+    # removing missing entries
+    remove_batch_ids(data, to_remove)
 
 
 def main():
