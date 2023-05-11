@@ -6,7 +6,7 @@ from correct_e_phase_separation import find_all_affected_compositions, get_compo
 import warnings
 
 targets = ["e_above_hull_new", "e-form", "band_gap_ind"]
-query = f"SELECT formula, e_phase_separation, e_form, band_gap_ind FROM {args.origin} WHERE mat_id = '{{batch_id}}';"
+query = f"SELECT formula, e_phase_separation, e_form, band_gap_ind FROM energy_runs_pbe WHERE mat_id = '{{batch_id}}';"
 
 
 def add_deltas(data, cursor, affected_formulas, file, relation):
@@ -41,7 +41,7 @@ def main():
     parser = ArgumentParser()
     parser.add_argument("data")
     parser.add_argument("target")
-    parser.add_argument("--origin", default="energy_runs_pbe")
+    # parser.add_argument("--origin", default="energy_runs_pbe")
     # parser.add_argument("-r", default="energy_runs_scan")
     args = parser.parse_args()
 
@@ -52,7 +52,7 @@ def main():
 
     # find all compositions, which have wrong e_phase_separation values
     print("Finding compositions, which have wrong phase separation values...")
-    affected_formulas = find_all_affected_compositions(cursor, args.origin)
+    affected_formulas = find_all_affected_compositions(cursor, "energy_runs_pbe")
 
     training_files = glob(os.path.join(args.data, "*.pickle.gz"))
 
@@ -65,7 +65,7 @@ def main():
     for file in tqdm(training_files):
         data = load(file)
 
-        add_deltas(data, cursor, affected_formulas, file, args.origin)
+        add_deltas(data, cursor, affected_formulas, file, "energy_runs_pbe")
 
         save(data, os.path.join(target_dir, os.path.basename(file)))
 
@@ -73,7 +73,7 @@ def main():
         for file in tqdm(glob(os.path.join(target_dir, sub_dir, "*.pickle.gz"))):
             data = load(file)
 
-            add_deltas(data, cursor, affected_formulas, file, args.origin)
+            add_deltas(data, cursor, affected_formulas, file, "energy_runs_pbe")
 
             save(data, os.path.join(target_dir, sub_dir, os.path.basename(file)))
 
