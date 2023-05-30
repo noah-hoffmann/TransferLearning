@@ -1,7 +1,7 @@
 from util import load, save, glob, remove_batch_ids
 import os.path
 from tqdm import tqdm
-import warnings
+# import warnings
 
 
 def get_files(data_dir, pattern="*.pickle.gz"):
@@ -13,11 +13,13 @@ def main():
     pbe_dir = "pbe/band_gap_prepared"
     pbe_files = get_files(pbe_dir)
     pbe_hulls = {}
-    print("Reading PBE hulls")
+    pbe_forms = {}
+    print("Reading PBE hulls and formation energies")
     for file in tqdm(pbe_files):
         data = load(file)
         for i, (batch_id,) in enumerate(data["batch_ids"]):
             pbe_hulls[batch_id] = data["target"]["e_above_hull_new"][i, 0]
+            pbe_forms[batch_id] = data["target"]["e-form"][i, 0]
 
     scan_dir = "scan/corrected_scan/band_gap_prepared"
     target_dir = "scan/corrected_scan/delta_ml_prepared"
@@ -25,14 +27,17 @@ def main():
     for file in tqdm(scan_files):
         data = load(file)
         data["target"]["delta_e_above_hull_new"] = data["target"]["e_above_hull_new"].copy()
+        data["target"]["delta_e-form"] = data["target"]["e-form"].copy()
         to_remove = set()
         for i, (batch_id,) in enumerate(tqdm(data["batch_ids"])):
             if batch_id not in pbe_hulls:
-                warnings.warn(f"{batch_id = } does not exist in pbe files, skipping this entry!")
+                # warnings.warn(f"{batch_id = } does not exist in pbe files, skipping this entry!")
                 to_remove.add(batch_id)
                 continue
             data["target"]["delta_e_above_hull_new"][i, 0] = data["target"]["e_above_hull_new"][i, 0] - pbe_hulls[batch_id]
+            data["target"]["delta_e-form"][i, 0] = data["target"]["e-form"][i, 0] - pbe_forms[batch_id]
 
+        print(f"Removing {len(to_remove)} / {len(data['batch_ids'])} entries")
         remove_batch_ids(data, to_remove)
         save(data, os.path.join(target_dir, file.split('/', maxsplit=3)[-1]))
 
