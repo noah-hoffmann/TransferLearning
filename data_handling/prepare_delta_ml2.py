@@ -34,7 +34,7 @@ def main():
             data["target"]["delta_e_above_hull_new"][i, 0] = data["target"]["e_above_hull_new"][i, 0] - pbe_hulls[batch_id]
 
         remove_batch_ids(data, to_remove)
-        save(data, os.path.join(target_dir, file.split('/', maxsplit=3)))
+        save(data, os.path.join(target_dir, file.split('/', maxsplit=3)[-1]))
 
 
 if __name__ == '__main__':
